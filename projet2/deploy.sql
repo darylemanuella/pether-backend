@@ -1,5 +1,6 @@
+-- procedure to retrieve information for one claimid 
 DELIMITER $$
-CREATE DEFINER="daryle"@"%" PROCEDURE "get_claimid"(IN p_connId varchar(128),IN p_dispId varchar(128))
+CREATE  PROCEDURE get_claimid(IN p_connId varchar(128),IN p_dispId varchar(128))
 BEGIN
  SELECT uc._claimid,status 
     FROM pos_dispensations  pd
@@ -9,9 +10,12 @@ BEGIN
 END$$
 DELIMITER ;
 
+-- end get_claimid
+
+-- procedure to retrieve the list of dispid  and returns a list of claimid
 
 DELIMITER $$
- CREATE DEFINER="daryle"@"%" PROCEDURE "get_claim2"(IN p_connId varchar(128),IN dispId varchar(8192))
+ CREATE  PROCEDURE get_claim2(IN p_connId varchar(128),IN dispId varchar(8192))
 BEGIN
 
         DECLARE done INT DEFAULT 0;
@@ -39,9 +43,12 @@ end;
 END$$
 DELIMITER ;
 
+-- end get_claim2
+
+-- procedure which takes as input the list of claimid and returns the informations for the message with the total insurercost
 
 DELIMITER $$
-CREATE DEFINER="daryle"@"%" PROCEDURE "pos_getsmsclaim5"(
+CREATE  PROCEDURE pos_getsmsclaim5(
    IN  p_claimid varchar(1000)
 )
 BEGIN
@@ -90,10 +97,11 @@ end;
 END$$
 DELIMITER ;
 
+-- end pos_getsmsclaim5
 
-
+-- procedure to save the claimid and the telephone number in the logs
 DELIMITER $$
-CREATE DEFINER="daryle"@"%" PROCEDURE "pos_claim_sms_sent"(IN p_connId varchar(128),IN p_claimid VARCHAR(500), p_to varchar(16))
+CREATE  PROCEDURE pos_claim_sms_sent(IN p_connId varchar(128),IN p_claimid VARCHAR(500), p_to varchar(16))
 BEGIN
 
 
@@ -125,7 +133,15 @@ begin
                 END IF;
         UNTIL done END REPEAT;
         CLOSE cur;
-end;
-    
+end;   
 END$$
 DELIMITER ;
+-- end pos_claim_sms_sent
+
+-- creation of the table for the messages to be sent with success
+CREATE TABLE pos_claim_sms (
+  claimid varchar(128) NOT NULL,
+  sentAt timestamp NOT NULL DEFAULT current_timestamp(),
+  telno varchar(16) NOT NULL
+);
+-- end creation table 
